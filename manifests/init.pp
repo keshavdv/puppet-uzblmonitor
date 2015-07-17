@@ -24,18 +24,23 @@
 #  }
 #
 class uzblmonitor(
-  $browser = 'uzbl'
+  $statefile = '/home/monitor/uzblmonitor-state.json'
 ) {
 
-  $quoted_browser = shellquote($browser)
+  $quoted_statefile = shellquote($statefile)
 
   # Remove stock-Ubuntu DM packages
   package { ['lightdm', 'ubuntu-session', 'unity', 'unity-greeter']:
     ensure => purged,
   } ->
+
   # Install NoDM and Matchbox for kiosk-style display/window management
-  package { ['xserver-xorg', 'nodm', 'matchbox-window-manager']:
+  package { ['xserver-xorg', 'nodm', 'luakit', 'xterm', 'tmux', 'i3', 'python-pip']:
     ensure => installed,
+  } ->
+  package { 'i3-py' :
+    ensure   => '0.6.4',
+    provider => 'pip'
   }
 
   package { 'browser-plugin-gnash':
@@ -52,6 +57,15 @@ class uzblmonitor(
     group  => monitor,
     mode   => '0444',
     source => 'puppet:///modules/uzblmonitor/xsession',
+  } ->
+  file{'/home/monitor/.i3/':
+    ensure => directory,
+  } ->
+  file { '/home/monitor/.i3/config':
+    ensure => file,
+    owner  => monitor,
+    group  => monitor,
+    source => 'puppet:///modules/uzblmonitor/i3_config',
   } ->
   file { '/etc/init/nodm-uzblmonitor.conf':
     ensure => file,
@@ -72,10 +86,6 @@ class uzblmonitor(
     require => Package['nodm'],
   }
 
-  package { 'uzblmonitor_browser_package':
-    name => $browser,
-    ensure => installed,
-  } ->
   file { '/usr/bin/uzblmonitor':
     ensure => file,
     owner  => root,
@@ -84,7 +94,7 @@ class uzblmonitor(
     source => 'puppet:///modules/uzblmonitor/uzblmonitor',
   } ->
   file { '/etc/default/uzblmonitor':
-    content => "BROWSER=${quoted_browser}",
+    content => "STATEFILE=${quoted_statefile}",
     notify => Service['uzblmonitor'],
   } ->
   file { '/etc/init/uzblmonitor.conf':
@@ -99,9 +109,8 @@ class uzblmonitor(
     require => Service['nodm-uzblmonitor'],
   }
 
-  if $browser == 'luakit' {
-    file { '/etc/xdg/luakit/uzblmonitor.lua':
-      source => 'puppet:///modules/uzblmonitor/uzblmonitor.lua',
-    }
+  file { '/etc/xdg/luakit/uzblmonitor.lua':
+    source => 'puppet:///modules/uzblmonitor/uzblmonitor.lua',
   }
+
 }
