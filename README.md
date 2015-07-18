@@ -30,14 +30,14 @@ An extremely basic state file looks like:
         "percent": 0.5,
         "command": "echo hello"
     }, {
-        "mode": "terminal",
+        "mode": "url",
         "percent": 0.5,
-        "command": "echo world"
+        "url": "http://www.google.com"
     }]
 }
 ```
 
-This would create a side-by-side layout with two terminal emulators.
+This would create a side-by-side layout with a terminal emulators on the left and a browser on the right.
 
 A `window` is the main layout element and can contain multiple children (either other `window`'s or Adapter definitions). The `percent` option controls how much of the parent is occupied. The `split` option must be either `splith` or `splitv` and defines how the children will be tiled.
 
@@ -50,4 +50,4 @@ available adapters include:
   * Expects `jumanji` executable to be found in $PATH
 
 - Terminal (`run an arbitrary command in a terminal emulator`)
-  * Expects `jumanji` executable to be found in $PATH
+  * Expects `xterm` executable to be found in $PATH
