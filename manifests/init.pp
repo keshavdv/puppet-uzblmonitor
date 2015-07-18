@@ -23,7 +23,7 @@
 #  # ...
 #  }
 #
-class uzblmonitor(
+class uzblmonitor (
   $statefile = '/home/monitor/uzblmonitor-state.json'
 ) {
 
@@ -107,10 +107,6 @@ class uzblmonitor(
   service { 'uzblmonitor':
     ensure  => running,
     require => Service['nodm-uzblmonitor'],
-  }
-
-  file { '/etc/xdg/luakit/uzblmonitor.lua':
-    source => 'puppet:///modules/uzblmonitor/uzblmonitor.lua',
   }
 
 }

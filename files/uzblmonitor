@@ -3,6 +3,7 @@ import argparse
 import logging
 import json
 import random
+import re
 import subprocess
 from subprocess import Popen
 import tempfile
@@ -139,7 +140,7 @@ class URL(ViewAdapter):
         return 'instance'
 
     def get_window_title(self):
-        return self.url
+        return re.escape(self.url)
 
 
 class Terminal(ViewAdapter):

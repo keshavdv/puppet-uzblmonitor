@@ -3,12 +3,19 @@
 
 `uzblmonitor` is an automatic monitor manager.
 
-
 ## About
 
 `uzblmonitor` reads state information from a JSON file on disk and generates a respective i3 workspace.
 
+## UI
 
+To use with `uzblmonitor-ui`, a few additional components are neeeded:
+
+* (puppet-consul_template)[https://github.com/Intelliplan/puppet-consul_template]
+
+```
+consul-template -consul localhost:8500 -template "/home/monitor/uzblmonitor-state.json.ctmpl:/home/monitor/uzblmonitor-state.json:service uzblmonitor restart"
+```
 #### State
 
 An extremely basic state file looks like:
